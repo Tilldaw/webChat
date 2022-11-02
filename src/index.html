@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>1</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    #container {
+      width: 800px;
+      height: 100vh;
+      margin: 0 auto;
+      position: relative;
+    }
+    #content {
+      max-height: 780px;
+      overflow-y: auto;
+    }
+    #bottom {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+    }
+    #box {
+      width: 100%;
+      border: skyblue 1px solid;
+      border-radius: 5px;
+      padding: 3px;
+    }
+    #text {
+      width: 98%;
+      height: 80px;
+      outline: none;
+      border: none;
+      resize: none;
+    }
+    #btn {
+      width: 100px;
+      height: 35px;
+      border: none;
+      cursor: pointer;
+      border-radius: 8px;
+      outline: none;
+    }
+    #btn:hover {
+      background-color: #ccc;
+    }
+    .w {
+      margin: 10px;
+      text-align: right;
+    }
+    .t {
+      margin: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id='container'>
+    <div id="content"></div>
+    <div id="bottom">
+      <div id='box'>
+        <textarea name="" id="text"></textarea>
+      </div>
+      <button id="btn">Send</button>
+    </div>
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io()
+    const btn = document.getElementById('btn')
+    const text = document.getElementById('text')
+    const content = document.getElementById('content')
+    let value = ''
+    let timer
+    const send = () => {
+      if(!text.value) return
+      socket.emit('send', text.value)
+      value = text.value
+      text.value = ''
+    }
+    text.addEventListener('keyup', e => {
+      if(e.keyCode === 13) {
+        send()
+      }
+    })
+    btn.addEventListener('click', () => {
+      send()
+    })
+    socket.on('send', msg => {
+      const div = document.createElement('div')
+      value !== msg ? div.classList = 't' : div.classList = 'w'
+      div.innerHTML = `<span class='span'>${msg}</span>`
+      document.querySelector('#content').appendChild(div)
+      content.scrollTop = 10000
+      if(value !== msg) {
+        if(document.visibilityState === 'visible') return
+        timer = setInterval(() => {
+          document.title === '1' ? document.title = '！！！！！！！！' : document.title = '1'
+        }, 100);
+      }
+    })
+    // 监听页面是否可见
+    document.addEventListener('visibilitychange', () => {
+      if(document.visibilityState === 'visible') {
+        document.title = '1'
+        clearInterval(timer)
+      }
+    })
+  </script>
+</body>
+</html>
