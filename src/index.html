@@ -3,168 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="icon" href="/favicon">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css">
   <title>暂无消息</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    #container {
-      display: flex;
-      flex-direction: column;
-      max-width: 500px;
-      height: 100vh;
-      margin: 0 auto;
-      position: relative;
-    }
-    #header {
-      height: 60px;
-      line-height: 60px;
-      padding-left: 10px;
-      background-color: #f3f3f3;
-    }
-    #content {
-      flex: 1;
-      overflow-y: scroll;
-      background-color: #eee;
-      padding-bottom: 5px;
-      padding-right: 5px;
-    }
-    #content::-webkit-scrollbar {
-      width: 5px;
-      height: 5px;
-    }
-    /* Track */
-    #content::-webkit-scrollbar-track {
-      background: #eee;
-      border-radius: 5px;
-    }
-    /* Handle */
-    #content::-webkit-scrollbar-thumb {
-      border-radius: 5px;
-      background: #ccc;
-    }
-
-    /* Handle on hover */
-    #content::-webkit-scrollbar-thumb:hover {
-      background: #ccc;
-    }
-
-    #content::-webkit-scrollbar-corner {
-      width: 0px;
-    }
-    #bottom {
-      height: 120px;
-    }
-    #box {
-      width: 100%;
-      height: 100%;
-      border: skyblue 1px solid;
-      border-radius: 5px;
-      padding: 3px;
-    }
-    #text {
-      width: 100%;
-      height: 100%;
-      outline: none;
-      border: none;
-      resize: none;
-      font-family: '微软雅黑';
-    }
-    #btn {
-      position: absolute;
-      bottom: 10px;
-      right: 10px;
-      width: 100px;
-      height: 35px;
-      outline: none;
-      border: none;
-      border-radius: 8px;
-    }
-    #btn:hover {
-      cursor: pointer;
-      background-color: #ccc;
-    }
-    .span {
-      word-wrap: break-word;
-      background-color: #65c468;
-      border-radius: 8px 8px 2px 8px;
-      padding: 5px 10px;
-      max-width: 80%;
-      margin-top: 2px;
-      display: inline-block;
-      text-align: left;
-    }
-    .w {
-      text-align: right;
-    }
-    .t .span{
-      background-color: #ccc;
-      border-radius: 8px 8px 8px 2px;
-    }
-  </style>
 </head>
 <body>
   <div id='container'>
-    <div id="header">当前对方在线</div>
+    <div id="header">
+      <span id="onlineState">对方不在线</span>
+      <span id="clear">清除聊天记录</span>
+    </div>
     <div id="content"></div>
     <div id="bottom">
-      <div id='box'>
-        <textarea name="" id="text"></textarea>
+      <div id='box' >
+        <div contenteditable="true" id="text"></div>
         <button id="btn">Send</button>
       </div>
     </div>
   </div>
   <script src="/socket.io/socket.io.js"></script>
-  <script>
-    const socket = io()
-    const mosi = ['暂无消息', 'A', 'B' , 'C' , 'D', 'E', 'F', 'G']
-    const btn = document.getElementById('btn')
-    const text = document.getElementById('text')
-    const content = document.getElementById('content')
-    const header = document.getElementById('header')
-    let value = ''
-    let timer
-    let msgTotal = 0
-    const send = () => {
-      if(!text.value) return
-      socket.emit('send', text.value)
-      value = text.value
-      // text.value = ''
-    }
-    text.addEventListener('keyup', e => {
-      if(e.keyCode === 13) {
-        send()
-      }
-    })
-    btn.addEventListener('click', () => {
-      send()
-    })
-    socket.on('send', msg => {
-      const div = document.createElement('div')
-      value !== msg ? div.classList = 't' : div.classList = 'w'
-      div.innerHTML = `<div class='span'>${msg}</div>`
-      document.querySelector('#content').appendChild(div)
-      content.scrollTop = 10000
-      if(value !== msg) {
-        if(document.visibilityState === 'visible') return
-        msgTotal ++
-        document.title = mosi[msgTotal] ?? 'so much'
-      }
-    })
-    socket.on('onLine', person => {
-      if(person > 1) return header.innerHTML = '1'
-      header.innerHTML = '对方不在线'
-    })
-    // 监听页面是否可见
-    document.addEventListener('visibilitychange', () => {
-      if(document.visibilityState === 'visible') {
-        msgTotal = 0
-        document.title = mosi[msgTotal]
-      }
-    })
-  </script>
+  <script src="/send"></script>
 </body>
 </html>

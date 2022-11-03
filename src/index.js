@@ -11,6 +11,18 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html')
 })
 
+app.get('/send', (req, res) => {
+  res.sendFile(__dirname + '/send.js')
+})
+
+app.get('/css', (req, res) => {
+  res.sendFile(__dirname + '/index.css')
+})
+
+app.get('/favicon', (req, res) => {
+  res.sendFile(__dirname + '/assets/favicon.svg')
+})
+
 io.on('connection', socket => {
   console.log('上号了', moment().format('HH:mm:s'))
   person ++
