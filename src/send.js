@@ -21,13 +21,14 @@ const viewHistory = () => {
 // 保存聊天记录
 const saveRecord = () => {
   const history = content.innerHTML
+  localStorage.removeItem('unRead')
   localStorage.setItem('history', history)
 }
 // 清除聊天记录
 const clearHistory = () => {
   localStorage.setItem('history', '')
   content.innerHTML = null
-  window.onbeforeunload = null
+  window.onbeforeunload = () => localStorage.removeItem('unRead')
 }
 clear.addEventListener('click', clearHistory)
 // 发送
@@ -39,6 +40,7 @@ const send = () => {
   socket.emit('send', message)
   value = message
   text.innerHTML = null
+  localStorage.setItem('unRead', 'true')
 }
 // 发送消息事件
 text.addEventListener('keydown', e => e.key === 'Enter' && send())
@@ -52,6 +54,21 @@ btn.addEventListener('click', send)
 socket.on('send', msg => {
   const div = document.createElement('div')
   div.classList = value !== msg ? 't' : 'w'
+  div.innerHTML = `<div class='span'>${msg}</div>`
+  content.appendChild(div)
+  content.scrollTop = 99999 // 发送消息后滚动条滚动至 五条九
+  text.setAttribute('contenteditable', true)
+  text.focus()
+  if(value === msg || document.visibilityState === 'visible') return
+  msgTotal ++ // 消息计数器
+  document.title = mosi[msgTotal] ?? 'so much' // title 提醒
+})
+// 接收未读消息
+socket.on('unRead', msg => {
+  const onLine = localStorage.getItem('unRead')
+  if(onLine) return
+  const div = document.createElement('div')
+  div.classList = 't'
   div.innerHTML = `<div class='span'>${msg}</div>`
   content.appendChild(div)
   content.scrollTop = 99999 // 发送消息后滚动条滚动至 五条九
