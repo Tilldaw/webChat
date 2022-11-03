@@ -151,7 +151,7 @@
       if(value !== msg) {
         if(document.visibilityState === 'visible') return
         msgTotal ++
-        document.title = mosi[msgTotal]
+        document.title = mosi[msgTotal] ?? 'so much'
       }
     })
     socket.on('onLine', person => {
