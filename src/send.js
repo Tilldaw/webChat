@@ -56,7 +56,7 @@ socket.on('send', msg => {
   div.classList = value !== msg ? 't' : 'w'
   div.innerHTML = `<div class='span'>${msg}</div>`
   content.appendChild(div)
-  content.scrollTop = 99999 // 发送消息后滚动条滚动至 五条九
+  content.scrollTo({ top: 99999, behavior: 'smooth'})
   text.setAttribute('contenteditable', true)
   text.focus()
   if(value === msg || document.visibilityState === 'visible') return
@@ -71,7 +71,7 @@ socket.on('unRead', msg => {
   div.classList = 't'
   div.innerHTML = `<div class='span'>${msg}</div>`
   content.appendChild(div)
-  content.scrollTop = 99999 // 发送消息后滚动条滚动至 五条九
+  content.scrollTop = 99999 // 接收未读消息后滚动条滚动至 五条九
   text.setAttribute('contenteditable', true)
   text.focus()
   if(value === msg || document.visibilityState === 'visible') return

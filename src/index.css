@@ -124,6 +124,9 @@
 .w {
   text-align: right;
 }
+.t {
+  margin-left: 5px;
+}
 .t .span {
   background-color: #ccc;
   border-radius: 8px 8px 8px 5px;
