@@ -56,7 +56,7 @@ socket.on('send', msg => {
   div.classList = value !== msg ? 't' : 'w'
   div.innerHTML = `<div class='span'>${msg}</div>`
   content.appendChild(div)
-  content.scrollTo({ top: 99999, behavior: 'smooth'})
+  setTimeout(() => content.scrollTo({ top: 99999, behavior: 'smooth'}), 0) // 来消息之后让他在渲染之后滚动
   text.setAttribute('contenteditable', true)
   text.focus()
   if(value === msg || document.visibilityState === 'visible') return
