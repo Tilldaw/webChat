@@ -6,6 +6,8 @@ const content = document.getElementById('content')
 const header = document.getElementById('header')
 const onlineState = document.getElementById('onlineState')
 const clear = document.getElementById('clear')
+const mark = document.getElementById('mark')
+const markImg = document.getElementById('markImg')
 let value
 let timer
 let canSend = true
@@ -41,20 +43,35 @@ const send = () => {
   value = message
   text.innerHTML = null
   localStorage.setItem('unRead', 'true')
+  btn.style.transform = text.innerHTML ? 'scale(1)' : 'scale(0)'
 }
 // 发送消息事件
 text.addEventListener('keydown', e => e.key === 'Enter' && send())
 text.addEventListener('keyup', e => {
+  btn.style.transform = text.innerHTML ? 'scale(1)' : 'scale(0)'
   if(e.key !== 'Enter') return
   canSend = true
   text.innerHTML = null
+  btn.style.transform = text.innerHTML ? 'scale(1)' : 'scale(0)'
 })
 btn.addEventListener('click', send)
-// 接收消息
-socket.on('send', msg => {
+// 创建消息盒子
+const createMessageBox = msg => {
   const div = document.createElement('div')
   div.classList = value !== msg ? 't' : 'w'
-  div.innerHTML = `<div class='span'>${msg}</div>`
+  const date = new Date()
+  const hours = date.getHours()
+  const minutes = date.getMinutes() > 9 ? date.getMinutes() : '0' + date.getMinutes()
+  const seconds = date.getSeconds() > 9 ? date.getSeconds() : '0' + date.getSeconds()
+  const month = date.getMonth() + 1
+  const day = date.getDate()
+  const title = `${month}月${day}号 ${hours}:${minutes}:${seconds}`
+  div.innerHTML = `<div class='span' title='${title}'>${msg}</div>`
+  return div
+}
+// 接收消息
+socket.on('send', msg => {
+  const div = createMessageBox(msg)
   content.appendChild(div)
   setTimeout(() => content.scrollTo({ top: 99999, behavior: 'smooth'}), 0) // 来消息之后让他在渲染之后滚动
   text.setAttribute('contenteditable', true)
@@ -67,9 +84,7 @@ socket.on('send', msg => {
 socket.on('unRead', msg => {
   const onLine = localStorage.getItem('unRead')
   if(onLine) return
-  const div = document.createElement('div')
-  div.classList = 't'
-  div.innerHTML = `<div class='span'>${msg}</div>`
+  const div = createMessageBox(msg)
   content.appendChild(div)
   content.scrollTop = 99999 // 接收未读消息后滚动条滚动至 五条九
   text.setAttribute('contenteditable', true)
@@ -82,6 +97,15 @@ socket.on('unRead', msg => {
 socket.on('onLine', person => {
   if(person > 1) return onlineState.innerHTML = '来咯'
   onlineState.innerHTML = '对方不在线'
+})
+// 图片放大
+content.addEventListener('dblclick', e => {
+  if(e.target.nodeName !== 'IMG') return
+  markImg.src = e.target.src
+  mark.style.transform = 'scale(1)'
+})
+mark.addEventListener('click', () => {
+  mark.style.transform = 'scale(0)'
 })
 // title 消息提醒
 document.addEventListener('visibilitychange', () => {
