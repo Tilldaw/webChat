@@ -40,6 +40,9 @@ const send = () => {
   const message = text.innerHTML
   if(!message) return
   socket.emit('send', message)
+  timer = setTimeout(() => {
+    socket.emit('send', message)
+  }, 1000);
   value = message
   text.innerHTML = null
   localStorage.setItem('unRead', 'true')
@@ -76,6 +79,7 @@ socket.on('send', msg => {
   setTimeout(() => content.scrollTo({ top: 99999, behavior: 'smooth'}), 0) // 来消息之后让他在渲染之后滚动
   text.setAttribute('contenteditable', true)
   text.focus()
+  if(value === msg) clearTimeout(timer)
   if(value === msg || document.visibilityState === 'visible') return
   msgTotal ++ // 消息计数器
   document.title = mosi[msgTotal] ?? 'so much' // title 提醒
@@ -113,5 +117,8 @@ document.addEventListener('visibilitychange', () => {
   msgTotal = 0
   document.title = mosi[msgTotal]
 })
+
+// 保存聊天记录
 window.onbeforeunload = saveRecord
+// 查看历史记录
 window.onload = viewHistory
