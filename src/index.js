@@ -16,6 +16,10 @@ app.get('/send', (req, res) => {
   res.sendFile(__dirname + '/send.js')
 })
 
+app.get('/indexexdDB', (req, res) => {
+  res.sendFile(__dirname + '/indexexdDB.js')
+})
+
 app.get('/css', (req, res) => {
   res.sendFile(__dirname + '/index.css')
 })
@@ -23,6 +27,7 @@ app.get('/css', (req, res) => {
 app.get('/favicon', (req, res) => {
   res.sendFile(__dirname + '/assets/favicon.svg')
 })
+
 
 io.on('connection', socket => {
   // 上号
