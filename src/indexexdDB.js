@@ -22,7 +22,7 @@ openRequest.onsuccess = e => {
   objectStore.openCursor(null, 'prev').onsuccess = e => {
     const cursor = e.target.result;
     if (cursor) { // 指针不为空
-      if(max > 30) return
+      if(max > 30) return // 读取最新的 30 条数据
       const { createtTime, value, className } = cursor.value
       console.log(cursor)
       const div = createMessageBox({ createtTime, msg: value, className})

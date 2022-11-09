@@ -25,17 +25,9 @@ let value
 let timer
 let canSend = true
 let msgTotal = 0
-// 聊天记录
-const viewHistory = () => {
-  const history = localStorage.getItem('history') ?? null
-  if(history) {
-    content.innerHTML = history
-    content.scrollTop = 99999
-  }
-}
 // 保存聊天记录
 const saveRecord = () => {
-  localStorage.removeItem('unRead')
+  localStorage.removeItem('onLine')
 }
 // 清除聊天记录
 const clearHistory = () => {
@@ -52,6 +44,7 @@ const send = () => {
   const message = text.innerHTML
   if(!message) return
   socket.emit('send', message)
+  localStorage.setItem('onLine', 'true')
   timer = setTimeout(() => {
     socket.emit('send', message)
   }, 1000);
@@ -93,7 +86,7 @@ socket.on('send', msg => {
 })
 // 接收未读消息
 socket.on('unRead', msg => {
-  const onLine = localStorage.getItem('unRead')
+  const onLine = localStorage.getItem('onLine')
   if(onLine) return
   const div = createMessageBox({ msg })
   addHistory({ createtTime: getTime(), value: msg, className: value !== msg ? 't' : 'w'})
@@ -127,5 +120,3 @@ document.addEventListener('visibilitychange', () => {
 })
 // 查看未读消息
 window.onbeforeunload = saveRecord
-// 查看历史记录
-window.onload = viewHistory
